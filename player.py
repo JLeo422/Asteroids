@@ -7,6 +7,7 @@ from constants import (
     PLAYER_SPEED, 
     PLAYER_SHOOT_SPEED, 
     PLAYER_SHOOT_COOLDOWN_SECONDS,
+    SHIELD_DURATION_SECONDS,
 )
 
 from shot import Shot
@@ -16,6 +17,7 @@ class Player(CircleShape):
         super().__init__(x,y,PLAYER_RADIUS)
         self.rotation = 0
         self.shoot_timer = 0
+        self.shield_timer = 0 #own
 
     # in the Player class
     def triangle(self):
@@ -33,6 +35,19 @@ class Player(CircleShape):
             self.triangle(),
             LINE_WIDTH,
         )
+        if self.shield_timer > 0:
+            pygame.draw.circle(
+                screen,
+                "cyan",
+                self.position,
+                self.radius + 10,
+                2,
+            )
+
+
+
+
+
     def rotate(self,dt):    
         self.rotation += PLAYER_TURN_SPEED *dt
 
@@ -52,11 +67,15 @@ class Player(CircleShape):
 
 
 
+
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
         if self.shoot_timer > 0:
             self.shoot_timer -= dt
+
+        if self.shield_timer > 0:
+            self.shield_timer -= dt
 
         if keys[pygame.K_a]:
             self.rotate(-dt) #left
@@ -72,6 +91,7 @@ class Player(CircleShape):
             if self.shoot_timer <= 0:
                 self.shoot()
                 self.shoot_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
+
 
 
 
